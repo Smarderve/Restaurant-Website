@@ -1,50 +1,34 @@
+const mongoose = require('mongoose');
 const express = require('express');
+require('dotenv').config();
+
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 //Middleware: teaches Express how to read JSON request bodies
 app.use(express.json());
 
-//Route 1: GET /
-app.get('/', (req, res) => {
-    res.send('Restaurant API Is Running');
-});
+//Routes
+const contactRoute = require('./routes/Contact');
+app.use('/api/contact', contactRoute);
 
-//Route 2: GET /api/menu
-app.get('/api/menu', (req, res) => {
+//"Base Route": GET /
+app.get('/', (req, res) => {
     res.json({
         success: true,
-        data: [
-            { id: 1, name: 'Eggs Benedict', price: 12.500, category: 'breakfast'},
-            { id: 2, name: 'Grilled Ribeye', price: 17.500, category: 'dinner'},
-            { id: 3, name: 'Eggs Benedict', price: 19.500, category: 'lunch'}
-        ]
+        message: 'Restaurant API Is Running'
     });
 });
 
-//Route 3: POST /api/contact
-app.get('/api/contact', (req, res) => {
-    const { name, email, message } = req.body;
+//Connect to MongoDB then Start Server
 
-    //Validation: check required fields
-    if(!name || !email || !message) {
-        return res.status(400).json({
-            success: false,
-            error: 'Name, Wmail, Message are all required Before submition'
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log('MongoDB COnnected');
+        app.listen(PORT, () => {
+            console.log(`Server Running on http;//localhost:${PORT}`);
         });
-    }
-
-    console.log('New Contact Message: ');
-    console.log({ name, email, message });
-
-    res.status(201).json({
-        success: true,
-        message: 'Message Received. We will get Back to you shortly. '
+    })
+    .catch((error) => {
+        console.log('MongoDB Connection failed...', error.message);
     });
-
-});
-
-//Start the Server
-app.listen(PORT, () => {
-    console.log('Server Running on http://localhost:${PORT}');
-});
