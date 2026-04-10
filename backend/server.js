@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
-        console.log('MongoDB COnnected');
+        console.log('MongoDB Connected');
         app.listen(PORT, () => {
             console.log(`Server Running on http;//localhost:${PORT}`);
         });

@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const conctactSchema = new mongoose.Schema({
 
     name: {
